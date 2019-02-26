@@ -1,0 +1,17 @@
+[
+    {
+        "severity": "info",
+        "msg": "Neither strcpy nor strncpy are used - That's suspicious",
+        "rule": "!AVAILABLE(strcpy) && !AVAILABLE(strncpy)"
+    },
+    {
+        "severity": "warning",
+        "msg": "strncpy used although strlcpy or strncpy are available",
+        "rule": "(AVAILABLE(strlcpy) || AVAILABLE(strncpy)) && USED(strcpy)"
+    },
+    {
+        "severity": "error",
+        "msg": "Too large symbol detected",
+        "rule": "LARGEST() >= 100000"
+    }
+]

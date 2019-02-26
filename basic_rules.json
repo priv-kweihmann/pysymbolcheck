@@ -1,0 +1,62 @@
+[
+    {
+        "severity": "error",
+        "msg": "strcpy is used - This is discouraged",
+        "rule": "USED(strcpy)"
+    },
+    {
+        "severity": "warning",
+        "msg": "strncpy is used - This is discouraged",
+        "rule": "USED(strncpy)"
+    },
+    {
+        "severity": "error",
+        "msg": "strcmp is used - This is discouraged",
+        "rule": "USED(strcmp)"
+    },
+    {
+        "severity": "warning",
+        "msg": "strncmp is used - This is discouraged",
+        "rule": "USED(strncmp)"
+    },
+    {
+        "severity": "error",
+        "msg": "strcasecmp is used - This is discouraged",
+        "rule": "USED(strcasecmp)"
+    },
+    {
+        "severity": "warning",
+        "msg": "strncasecmp is used - This is discouraged",
+        "rule": "USED(strncasecmp)"
+    },
+    {
+        "severity": "error",
+        "msg": "strcat is used - This is discouraged",
+        "rule": "USED(strcat)"
+    },
+    {
+        "severity": "warning",
+        "msg": "strncat is used - This is discouraged",
+        "rule": "USED(strncat)"
+    },
+    {
+        "severity": "error",
+        "msg": "memcmp is used - This is discouraged",
+        "rule": "USED(memcmp)"
+    },
+    {
+        "severity": "error",
+        "msg": "gets is used - This is discouraged",
+        "rule": "USED(gets)"
+    },
+    {
+        "severity": "error",
+        "msg": "sprintf is used - This is discouraged",
+        "rule": "USED(sprintf)"
+    },
+    {
+        "severity": "error",
+        "msg": "sprintf is used - This is discouraged",
+        "rule": "USED(sprintf)"
+    }
+]
