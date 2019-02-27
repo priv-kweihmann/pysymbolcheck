@@ -1,61 +1,67 @@
 [
     {
         "severity": "error",
+        "id": "BadFunction.strcpy",
         "msg": "strcpy is used - This is discouraged",
         "rule": "USED(strcpy)"
     },
     {
         "severity": "warning",
+        "id": "BadFunction.strncpy",
         "msg": "strncpy is used - This is discouraged",
         "rule": "USED(strncpy)"
     },
     {
         "severity": "error",
+        "id": "BadFunction.strcmp",
         "msg": "strcmp is used - This is discouraged",
         "rule": "USED(strcmp)"
     },
     {
         "severity": "warning",
+        "id": "BadFunction.strncmp",
         "msg": "strncmp is used - This is discouraged",
         "rule": "USED(strncmp)"
     },
     {
         "severity": "error",
+        "id": "BadFunction.strcasecmp",
         "msg": "strcasecmp is used - This is discouraged",
         "rule": "USED(strcasecmp)"
     },
     {
         "severity": "warning",
+        "id": "BadFunction.strncasecmp",
         "msg": "strncasecmp is used - This is discouraged",
         "rule": "USED(strncasecmp)"
     },
     {
         "severity": "error",
+        "id": "BadFunction.strcat",
         "msg": "strcat is used - This is discouraged",
         "rule": "USED(strcat)"
     },
     {
         "severity": "warning",
+        "id": "BadFunction.strncat",
         "msg": "strncat is used - This is discouraged",
         "rule": "USED(strncat)"
     },
     {
         "severity": "error",
+        "id": "BadFunction.memcmp",
         "msg": "memcmp is used - This is discouraged",
         "rule": "USED(memcmp)"
     },
     {
         "severity": "error",
+        "id": "BadFunction.gets",
         "msg": "gets is used - This is discouraged",
         "rule": "USED(gets)"
     },
     {
         "severity": "error",
-        "msg": "sprintf is used - This is discouraged",
-        "rule": "USED(sprintf)"
-    },
-    {
-        "severity": "error",
+        "id": "BadFunction.sprintf",
         "msg": "sprintf is used - This is discouraged",
         "rule": "USED(sprintf)"
     }

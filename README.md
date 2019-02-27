@@ -30,7 +30,7 @@ a rule file consists of a json-array, like this
 within this __n__ element of the following can be added
 
 ```
-{ "severity": "error", "msg": "some message", "rule", "<rule>" }
+{ "severity": "error", "id": "A_Unique_ID", "msg": "some message", "rule", "<rule>" }
 ```
 
 for __severity__ it is advised to use only **info**, **warning** or **error**

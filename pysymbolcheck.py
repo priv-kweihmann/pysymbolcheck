@@ -105,6 +105,7 @@ def find_lib_in_path(filename, lib_path):
         # Check for in root first
         if os.path.exists(l + "/" + filename):
             return l + "/" + filename
+    for l in lib_path:
         ## lookup in subdirs
         if any(glob.glob(l + "/**/" + filename, recursive=True)):
             return glob.glob(l + "/**/" + filename, recursive=True)[0]
@@ -176,7 +177,7 @@ def get_symbols_rec(filename, lib_path):
 
 def report_issues(rule):
     global fut
-    sys.stderr.write("{}: {}: {}\n".format(fut, rule["severity"], rule["msg"]))
+    sys.stderr.write("{}:{}:{}: {}\n".format(fut, rule["severity"], rule["id"], rule["msg"]))
 
 
 def parse_rules(item):
@@ -210,10 +211,20 @@ def create_argparses():
                         help='\":\" separated path to lookup libraries')
     return parser
 
+def get_std_lib_paths():
+    import subprocess
+    output = []
+    for item in [ "/lib/i386-linux-gnu", "/usr/lib/i386-linux-gnu", "/usr/local/lib", "/usr/lib", 
+    "/lib/x86_64-linux-gnu", "/usr/lib/x86_64-linux-gnu", "/lib32", "/usr/lib32", "/libx32", "/usr/libx32", "/lib" ]:
+        if os.path.exists(item):
+            output.append((item))
+    return output
+
 
 if __name__ == '__main__':
     args = create_argparses().parse_args()
-    args.libpath = [os.getcwd()] + args.libpath.split(":")
+    args.libpath = [os.getcwd()] + get_std_lib_paths() + args.libpath.split(":")
+    print("Using library paths {}".format(args.libpath))
     fut = args.file
     if not os.path.isfile(fut):
         print("File is not a file")

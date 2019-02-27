@@ -1,16 +1,19 @@
 [
     {
         "severity": "info",
+        "id": "Suspicious.NoStrCpy",
         "msg": "Neither strcpy nor strncpy are used - That's suspicious",
         "rule": "!AVAILABLE(strcpy) && !AVAILABLE(strncpy)"
     },
     {
         "severity": "warning",
+        "id": "BadFunction.strcpy",
         "msg": "strncpy used although strlcpy or strncpy are available",
         "rule": "(AVAILABLE(strlcpy) || AVAILABLE(strncpy)) && USED(strcpy)"
     },
     {
         "severity": "error",
+        "id": "Other.TooLargeSymbol",
         "msg": "Too large symbol detected",
         "rule": "LARGEST() >= 100000"
     }
