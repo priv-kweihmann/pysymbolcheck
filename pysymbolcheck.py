@@ -40,12 +40,12 @@ try:
     import elftools.elf.elffile as elffile
     import elftools.elf.structs as structs
 except ImportError:
-    print("Can't import pyelftools - Please install\nby running 'pip3 install pyelftools'")
+    sys.stderr.write("Can't import pyelftools - Please install\nby running 'pip3 install pyelftools'\n")
     sys.exit(-1)
 try:
     from jsonmerge import merge
 except ImportError:
-    print("Can't import jsonmerge - Please install\nby running 'pip3 install jsonmerge'")
+    sys.stderr.write("Can't import jsonmerge - Please install\nby running 'pip3 install jsonmerge'\n")
     sys.exit(-1)
 
 symbols = {}
@@ -109,7 +109,7 @@ def find_lib_in_path(filename, lib_path):
         ## lookup in subdirs
         if any(glob.glob(l + "/**/" + filename, recursive=True)):
             return glob.glob(l + "/**/" + filename, recursive=True)[0]
-    print("Can't find the needed lib {}".format(filename))
+    sys.stderr.write("Can't find the needed lib {}\n".format(filename))
     sys.exit(-1)
 
 
@@ -119,7 +119,7 @@ def get_soname(filename, lib_path):
     try:
         f = elffile.ELFFile(stream)
     except:
-        print("Can't read input file - Seems not to be an elf")
+        sys.stderr.write("Can't read input file - Seems not to be an elf\n")
         sys.exit(-1)
     dynamic = f.get_section_by_name('.dynamic')
     dynstr = f.get_section_by_name('.dynstr')
@@ -151,7 +151,7 @@ def get_symbols(filename, lib_path):
     try:
         f = elffile.ELFFile(stream)
     except:
-        print("Can't read input file - Seems not to be an elf")
+        sys.stderr.write("Can't read input file - Seems not to be an elf\n")
         sys.exit(-1)
     for sec in f.iter_sections():
         try:
@@ -177,7 +177,7 @@ def get_symbols_rec(filename, lib_path):
 
 def report_issues(rule):
     global fut
-    sys.stderr.write("{}:{}:{}: {}\n".format(fut, rule["severity"], rule["id"], rule["msg"]))
+    sys.stdout.write("{}:{}:{}: {}\n".format(fut, rule["severity"], rule["id"], rule["msg"]))
 
 
 def parse_rules(item):
@@ -193,7 +193,7 @@ def parse_rules(item):
             report_issues(item)
             return False
     except Exception as e:
-        print("Rule {} is not well-formed: {}".format(item["rule"], e))
+        sys.stderr.write("Rule {} is not well-formed: {}\n".format(item["rule"], e))
         return False
     return True
 
@@ -223,17 +223,16 @@ def get_std_lib_paths():
 
 if __name__ == '__main__':
     args = create_argparses().parse_args()
-    args.libpath = [os.getcwd()] + get_std_lib_paths() + args.libpath.split(":")
-    print("Using library paths {}".format(args.libpath))
+    args.libpath = [os.getcwd()] + args.libpath.split(":") + get_std_lib_paths()
     fut = args.file
     if not os.path.isfile(fut):
-        print("File is not a file")
+        sys.stderr.write("File is not a file\n")
         sys.exit(-1)
     try:
         with open(args.rules) as f:
             rules = json.load(f)
     except:
-        print("Can't parse rules")
+        sys.stderr.write("Can't parse rules\n")
         sys.exit(-1)
 
     symbols = get_symbols_rec(args.file, args.libpath)
