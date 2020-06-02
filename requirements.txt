@@ -1,0 +1,2 @@
+pyelftools>=0.26
+jsonmerge>=1.7.0

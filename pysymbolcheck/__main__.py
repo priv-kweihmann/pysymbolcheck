@@ -1,30 +1,3 @@
-#!/usr/bin/env python3
-# Copyright 2019 Konrad Weihmann
-#
-# Redistribution and use in source and binary forms, with or without modification, 
-# are permitted provided that the following conditions are met:
-#
-# 1. Redistributions of source code must retain the above copyright notice, 
-# this list of conditions and the following disclaimer.
-#
-# 2. Redistributions in binary form must reproduce the above copyright notice, 
-# this list of conditions and the following disclaimer in the documentation 
-# and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS 
-# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-# GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# Parts of this files are based on work of https://github.com/eliben/pyelftools
-# licensed under public domain
-
 import argparse
 import copy
 import ctypes
@@ -34,33 +7,25 @@ import os
 import re
 import sys
 
-try:
-    import elftools
-    import elftools.construct.macros as macros
-    import elftools.elf.elffile as elffile
-    import elftools.elf.structs as structs
-except ImportError:
-    sys.stderr.write("Can't import pyelftools - Please install\nby running 'pip3 install pyelftools'\n")
-    sys.exit(-1)
-try:
-    from jsonmerge import merge
-except ImportError:
-    sys.stderr.write("Can't import jsonmerge - Please install\nby running 'pip3 install jsonmerge'\n")
-    sys.exit(-1)
+import elftools
+import elftools.construct.macros as macros
+import elftools.elf.elffile as elffile
+import elftools.elf.structs as structs
+from jsonmerge import merge
 
 symbols = {}
 rules = {}
 fut = None
 
 _mapping_table = {
-    "AVAILABLE\(([A-Za-z0-9_]*)\)": r"__get_available('\1')",
-    "USED\(([A-Za-z0-9_]*)\)": r"__get_used('\1')",
-    "SIZE\(([A-Za-z0-9_]*)\)": r"__get_size('\1')",
-    "TYPE\(([A-Za-z0-9_]*),([A-Za-z0-9_]*)\)": r"__get_type('\1', '\2')",
-    "LARGEST\(\)": r"__get_largest_symbol()",
-    "\&\&": r" and ",
-    "\|\|": r" or ",
-    "\!": r" not "
+    r"AVAILABLE\(([A-Za-z0-9_]*)\)": r"__get_available('\1')",
+    r"USED\(([A-Za-z0-9_]*)\)": r"__get_used('\1')",
+    r"SIZE\(([A-Za-z0-9_]*)\)": r"__get_size('\1')",
+    r"TYPE\(([A-Za-z0-9_]*),([A-Za-z0-9_]*)\)": r"__get_type('\1', '\2')",
+    r"LARGEST\(\)": r"__get_largest_symbol()",
+    r"\&\&": r" and ",
+    r"\|\|": r" or ",
+    r"\!": r" not "
 }
 
 
@@ -163,7 +128,7 @@ def get_symbols(filename, lib_path):
                 if sym.entry.st_shndx == 'SHN_UNDEF':
                     entry["used_in"] = [filename]
                 result[sym.name] = entry
-        except Exception as e:
+        except Exception:
             pass
     return result
 
@@ -177,7 +142,8 @@ def get_symbols_rec(filename, lib_path):
 
 def report_issues(rule):
     global fut
-    sys.stdout.write("{}:{}:{}: {}\n".format(fut, rule["severity"], rule["id"], rule["msg"]))
+    sys.stdout.write("{}:{}:{}: {}\n".format(
+        fut, rule["severity"], rule["id"], rule["msg"]))
 
 
 def parse_rules(item):
@@ -193,7 +159,8 @@ def parse_rules(item):
             report_issues(item)
             return False
     except Exception as e:
-        sys.stderr.write("Rule {} is not well-formed: {}\n".format(item["rule"], e))
+        sys.stderr.write(
+            "Rule {} is not well-formed: {}\n".format(item["rule"], e))
         return False
     return True
 
@@ -211,24 +178,30 @@ def create_argparses():
                         help='\":\" separated path to lookup libraries')
     return parser
 
+
 def get_std_lib_paths():
     import subprocess
     output = []
-    for item in [ "/lib/i386-linux-gnu", "/usr/lib/i386-linux-gnu", "/usr/local/lib", "/usr/lib", 
-    "/lib/x86_64-linux-gnu", "/usr/lib/x86_64-linux-gnu", "/lib32", "/usr/lib32", "/libx32", "/usr/libx32", "/lib" ]:
+    for item in ["/lib/i386-linux-gnu", "/usr/lib/i386-linux-gnu", "/usr/local/lib", "/usr/lib",
+                 "/lib/x86_64-linux-gnu", "/usr/lib/x86_64-linux-gnu", "/lib32", "/usr/lib32", "/libx32", "/usr/libx32", "/lib"]:
         if os.path.exists(item):
             output.append((item))
     return output
 
 
-if __name__ == '__main__':
+def main():
+    global symbols
+    global fut
     args = create_argparses().parse_args()
-    args.libpath = [os.getcwd()] + args.libpath.split(":") + get_std_lib_paths()
+    args.libpath = [os.getcwd()] + args.libpath.split(":") + \
+        get_std_lib_paths()
     fut = args.file
     if not os.path.isfile(fut):
         sys.stderr.write("File is not a file\n")
         sys.exit(-1)
     try:
+        if not os.path.isabs(args.rules):
+            args.rules = os.path.join(os.path.dirname(__file__), args.rules)
         with open(args.rules) as f:
             rules = json.load(f)
     except:
@@ -239,3 +212,7 @@ if __name__ == '__main__':
     if not eval_rules(rules):
         sys.exit(1)
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

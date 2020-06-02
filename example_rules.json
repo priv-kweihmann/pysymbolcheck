@@ -15,6 +15,6 @@
         "severity": "error",
         "id": "Other.TooLargeSymbol",
         "msg": "Too large symbol detected",
-        "rule": "LARGEST() >= 100000"
+        "rule": "LARGEST() >= 1000"
     }
 ]
