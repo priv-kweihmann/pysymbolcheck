@@ -101,12 +101,14 @@ def get_soname(filename, lib_path):
     else:
         raise RuntimeError('unsupported machine architecture')
     results = []
-    if 'sh_entsize' in (dynamic or {}):
+    try:
         entsize = dynamic['sh_entsize']
         for k in range(int(dynamic.get('sh_size', 0)/entsize)):
             result = st.parse(dynamic.data()[k*entsize:(k+1)*entsize])
             if result.d_tag == 1:
                 results.append(dynstr.get_string(result.d_val))
+    except (KeyError, TypeError):
+        pass
     return results
 
 
