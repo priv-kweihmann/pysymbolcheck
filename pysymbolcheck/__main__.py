@@ -103,11 +103,11 @@ def get_soname(filename, lib_path):
     results = []
     try:
         entsize = dynamic['sh_entsize']
-        for k in range(int(dynamic.get('sh_size', 0)/entsize)):
+        for k in range(int(dynamic['sh_size']/entsize)):
             result = st.parse(dynamic.data()[k*entsize:(k+1)*entsize])
             if result.d_tag == 1:
                 results.append(dynstr.get_string(result.d_val))
-    except (KeyError, TypeError):
+    except (KeyError, TypeError, AttributeError):
         pass
     return results
 
