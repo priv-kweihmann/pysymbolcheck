@@ -16,7 +16,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="pysymbolcheck",
-    version="2.4",
+    version="2.5",
     author="Konrad Weihmann",
     author_email="kweihmann@outlook.com",
     description="ELF symbol check",
