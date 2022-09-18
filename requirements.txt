@@ -1,2 +1,3 @@
-pyelftools>=0.26
-jsonmerge>=1.7.0
+jsonmerge == 1.8.0
+pyelftools == 0.29
+wheel == 0.37.1
