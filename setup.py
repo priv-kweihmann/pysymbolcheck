@@ -20,7 +20,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "pysymbolcheck = pysymbolcheck.__main__:main",
-        ]
+        ],
     },
     install_requires=requirements,
     include_package_data=True,
@@ -36,6 +36,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3",
         "Topic :: Software Development :: Quality Assurance",
     ],

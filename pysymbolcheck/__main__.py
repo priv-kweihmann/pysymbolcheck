@@ -1,16 +1,14 @@
 import argparse
 import copy
-import ctypes
 import glob
 import json
 import os
 import re
 import sys
 
-import elftools
-import elftools.construct.macros as macros
-import elftools.elf.elffile as elffile
-import elftools.elf.structs as structs
+import elftools.construct.macros as macros  # noqa: I900
+import elftools.elf.elffile as elffile  # noqa: I900
+import elftools.elf.structs as structs  # noqa: I900
 from jsonmerge import merge
 
 symbols = {}
@@ -25,7 +23,7 @@ _mapping_table = {
     r"LARGEST\(\)": r"__get_largest_symbol()",
     r"\&\&": r" and ",
     r"\|\|": r" or ",
-    r"\!": r" not "
+    r"\!": r" not ",
 }
 
 
@@ -42,23 +40,23 @@ def __get_available(item):
 def __get_used(item):
     global symbols
     global fut
-    if not item in symbols.keys():
+    if item not in symbols.keys():
         return False
     return symbols[item]["file"] == fut or ("used_in" in symbols[item] and fut in symbols[item]["used_in"])
 
 
 def __get_size(item):
     global symbols
-    if not item in symbols or not "size" in symbols[item]:
+    if item not in symbols or "size" not in symbols[item]:
         return ""
     if isinstance(symbols[item]["size"], str):
         return int(symbols[item]["size"])
     return symbols[item]["size"]
 
 
-def __get_type(item, type):
+def __get_type(item, type_):
     global symbols
-    if not item in symbols or not "type" in symbols[item]:
+    if item not in symbols or "type" not in symbols[item]:
         return ""
     return symbols[item]["type"]
 
@@ -66,15 +64,15 @@ def __get_type(item, type):
 def find_lib_in_path(filename, lib_path):
     if os.path.isabs(filename):
         return filename
-    for l in lib_path:
+    for lib in lib_path:
         # Check for in root first
-        if os.path.exists(l + "/" + filename):
-            return l + "/" + filename
-    for l in lib_path:
-        ## lookup in subdirs
-        if any(glob.glob(l + "/**/" + filename, recursive=True)):
-            return glob.glob(l + "/**/" + filename, recursive=True)[0]
-    sys.stderr.write("Can't find the needed lib {}\n".format(filename))
+        if os.path.exists(lib + "/" + filename):
+            return lib + "/" + filename
+    for lib in lib_path:
+        # lookup in subdirs
+        if any(glob.glob(lib + "/**/" + filename, recursive=True)):
+            return glob.glob(lib + "/**/" + filename, recursive=True)[0]
+    sys.stderr.write("Can't find the needed lib {fn}\n".format(fn=filename))
     sys.exit(-1)
 
 
@@ -83,7 +81,7 @@ def get_soname(filename, lib_path):
     f = None
     try:
         f = elffile.ELFFile(stream)
-    except:
+    except BaseException:
         sys.stderr.write("Can't read input file - Seems not to be an elf\n")
         sys.exit(-1)
     dynamic = f.get_section_by_name('.dynamic')
@@ -103,8 +101,8 @@ def get_soname(filename, lib_path):
     results = []
     try:
         entsize = dynamic['sh_entsize']
-        for k in range(int(dynamic['sh_size']/entsize)):
-            result = st.parse(dynamic.data()[k*entsize:(k+1)*entsize])
+        for k in range(int(dynamic['sh_size'] / entsize)):
+            result = st.parse(dynamic.data()[k * entsize:(k + 1) * entsize])
             if result.d_tag == 1:
                 results.append(dynstr.get_string(result.d_val))
     except (KeyError, TypeError, AttributeError):
@@ -118,7 +116,7 @@ def get_symbols(filename, lib_path):
     f = None
     try:
         f = elffile.ELFFile(stream)
-    except:
+    except BaseException:
         sys.stderr.write("Can't read input file - Seems not to be an elf\n")
         sys.exit(-1)
     for sec in f.iter_sections():
@@ -131,7 +129,7 @@ def get_symbols(filename, lib_path):
                 if sym.entry.st_shndx == 'SHN_UNDEF':
                     entry["used_in"] = [filename]
                 result[sym.name] = entry
-        except Exception:
+        except BaseException:
             pass
     return result
 
@@ -145,8 +143,7 @@ def get_symbols_rec(filename, lib_path):
 
 def report_issues(rule):
     global fut
-    sys.stdout.write("{}:{}:{}: {}\n".format(
-        fut, rule["severity"], rule["id"], rule["msg"]))
+    sys.stdout.write(f'{fut}:{rule["severity"]}:{rule["id"]}: {rule["msg"]}\n')
 
 
 def parse_rules(item):
@@ -157,13 +154,13 @@ def parse_rules(item):
         org_rule = re.sub(k, v, org_rule)
     org_rule = re.sub(r"\s{2,}", " ", org_rule).strip()
     try:
-        compile(org_rule, "pattern_test", "eval")
-        if eval(org_rule):
+        compile(org_rule, "pattern_test", "eval")  # noqa: DUO110
+        if eval(org_rule):  # noqa: DUO104, S307
             report_issues(item)
             return False
     except Exception as e:
         sys.stderr.write(
-            "Rule {} is not well-formed: {}\n".format(item["rule"], e))
+            "Rule {rule} is not well-formed: {e}\n".format(rule=item["rule"], e=e))
         return False
     return True
 
@@ -183,7 +180,6 @@ def create_argparses():
 
 
 def get_std_lib_paths():
-    import subprocess
     output = []
     for item in ["/lib/i386-linux-gnu", "/usr/lib/i386-linux-gnu", "/usr/local/lib", "/usr/lib",
                  "/lib/x86_64-linux-gnu", "/usr/lib/x86_64-linux-gnu", "/lib32", "/usr/lib32", "/libx32", "/usr/libx32", "/lib"]:
@@ -196,18 +192,15 @@ def main():
     global symbols
     global fut
     args = create_argparses().parse_args()
-    args.libpath = [os.getcwd()] + args.libpath.split(":") + \
-        get_std_lib_paths()
+    args.libpath = [os.getcwd()] + args.libpath.split(":") + get_std_lib_paths()
     fut = args.file
     if not os.path.isfile(fut):
         sys.stderr.write("File is not a file\n")
         sys.exit(-1)
     try:
-        if not os.path.isabs(args.rules):
-            args.rules = os.path.join(os.path.dirname(__file__), args.rules)
         with open(args.rules) as f:
             rules = json.load(f)
-    except:
+    except BaseException:
         sys.stderr.write("Can't parse rules\n")
         sys.exit(-1)
 
