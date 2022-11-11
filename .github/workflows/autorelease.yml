@@ -14,7 +14,7 @@ on:
 env:
   VERSION_FILE: setup.py
   MODULE_CODE: pysymbolcheck/*
-  PYPI_PUBLISH: 0
+  PYPI_PUBLISH: 1
 
 jobs:
   release:
