@@ -166,7 +166,7 @@ def parse_rules(item):
 
 
 def eval_rules(rules):
-    return all([parse_rules(x) for x in rules])
+    return all(parse_rules(x) for x in rules)
 
 
 def create_argparses():
