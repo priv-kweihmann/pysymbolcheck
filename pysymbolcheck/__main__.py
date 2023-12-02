@@ -143,7 +143,7 @@ def get_symbols_rec(filename, lib_path):
 
 def report_issues(rule):
     global fut
-    sys.stdout.write(f'{fut}:{rule["severity"]}:{rule["id"]}: {rule["msg"]}\n')
+    sys.stdout.write(f'{fut}:{rule["severity"]}:{rule["id"]}: {rule["msg"]}\n')  # noqa: E231
 
 
 def parse_rules(item):
