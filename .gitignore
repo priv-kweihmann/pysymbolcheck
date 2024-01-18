@@ -9,3 +9,5 @@ dist/
 
 # VisualStudioCode
 .vscode/*
+
+.env
