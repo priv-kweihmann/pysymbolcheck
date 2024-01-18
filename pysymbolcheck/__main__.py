@@ -81,7 +81,7 @@ def get_soname(filename, lib_path):
     f = None
     try:
         f = elffile.ELFFile(stream)
-    except BaseException:
+    except Exception:
         sys.stderr.write("Can't read input file - Seems not to be an elf\n")
         sys.exit(-1)
     dynamic = f.get_section_by_name('.dynamic')
@@ -116,7 +116,7 @@ def get_symbols(filename, lib_path):
     f = None
     try:
         f = elffile.ELFFile(stream)
-    except BaseException:
+    except Exception:
         sys.stderr.write("Can't read input file - Seems not to be an elf\n")
         sys.exit(-1)
     for sec in f.iter_sections():
@@ -129,7 +129,7 @@ def get_symbols(filename, lib_path):
                 if sym.entry.st_shndx == 'SHN_UNDEF':
                     entry["used_in"] = [filename]
                 result[sym.name] = entry
-        except BaseException:
+        except Exception:  # noqa: S110
             pass
     return result
 
@@ -200,7 +200,7 @@ def main():
     try:
         with open(args.rules) as f:
             rules = json.load(f)
-    except BaseException:
+    except Exception:
         sys.stderr.write("Can't parse rules\n")
         sys.exit(-1)
 
