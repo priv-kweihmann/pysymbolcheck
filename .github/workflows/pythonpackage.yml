@@ -23,7 +23,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: prepare
       run: |
-        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip build
         pip install --upgrade setuptools
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
@@ -31,4 +31,4 @@ jobs:
       run: flake8
       shell: bash
     - name: build
-      run: python3 setup.py build sdist bdist_wheel --universal
+      run: python3 -m build --sdist --wheel
