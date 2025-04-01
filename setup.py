@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="pysymbolcheck",
-    version="2.10.1",
+    version="2.10.2",
     author="Konrad Weihmann",
     author_email="kweihmann@outlook.com",
     description="ELF symbol check",
