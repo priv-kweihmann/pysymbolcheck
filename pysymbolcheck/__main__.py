@@ -28,25 +28,20 @@ _mapping_table = {
 
 
 def __get_largest_symbol():
-    global symbols
     return max([symbols[k]["size"] for k in symbols.keys()])
 
 
 def __get_available(item):
-    global symbols
     return item in symbols.keys()
 
 
 def __get_used(item):
-    global symbols
-    global fut
     if item not in symbols.keys():
         return False
     return symbols[item]["file"] == fut or ("used_in" in symbols[item] and fut in symbols[item]["used_in"])
 
 
 def __get_size(item):
-    global symbols
     if item not in symbols or "size" not in symbols[item]:
         return ""
     if isinstance(symbols[item]["size"], str):
@@ -55,7 +50,6 @@ def __get_size(item):
 
 
 def __get_type(item, type_):
-    global symbols
     if item not in symbols or "type" not in symbols[item]:
         return ""
     return symbols[item]["type"]
@@ -142,13 +136,10 @@ def get_symbols_rec(filename, lib_path):
 
 
 def report_issues(rule):
-    global fut
     sys.stdout.write(f'{fut}:{rule["severity"]}:{rule["id"]}: {rule["msg"]}\n')  # noqa: E231
 
 
 def parse_rules(item):
-    global _mapping_table
-    global fut
     org_rule = copy.deepcopy(item["rule"])
     for k, v in _mapping_table.items():
         org_rule = re.sub(k, v, org_rule)
