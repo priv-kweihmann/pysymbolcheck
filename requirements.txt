@@ -1,2 +1,0 @@
-jsonmerge ~= 1.9
-pyelftools == 0.32
