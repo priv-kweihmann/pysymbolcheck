@@ -45,7 +45,7 @@ statistics = false
 
 [project]
 name = "pysymbolcheck"
-requires-python = ">= 3.9"
+requires-python = ">= 3.10"
 version = "2.11.0"
 description = "ELF symbol check"
 readme = "README.md"
@@ -66,7 +66,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
   "jsonmerge ~= 1.9",
