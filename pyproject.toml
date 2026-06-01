@@ -70,7 +70,7 @@ classifiers = [
 ]
 dependencies = [
   "jsonmerge ~= 1.9",
-  "pyelftools == 0.32"
+  "pyelftools == 0.33"
 ]
 dynamic = ["optional-dependencies"]
 
